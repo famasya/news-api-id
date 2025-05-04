@@ -4,7 +4,8 @@ export default function RoutesPage() {
   const channels = Object.keys(feedResolver)
 
   return <>
-    <h3>Available routes</h3>
+    <h3>News API ID (API Berita Bahasa Indonesia)</h3>
+    <p><a href="https://github.com/famasya/news-api-id" target="_blank">[source / bug report]</a></p>
     <p>Results are cached for 5 minutes.</p>
     {channels.map((channel) => (
       <>
