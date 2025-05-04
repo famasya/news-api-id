@@ -63,16 +63,24 @@ export const feedResolver = {
       url: `https://feed.liputan6.com/rss/${categories.includes(category) ? category : "news"}`
     }
   },
-  kumparan: (category: string) => {
+  kumparan: (_: string) => {
     const categories = ["news", "entertainment", "tekno-sains", "bisnis", "food-travel", "otomotif", "bola-sports", "woman", "mom", "bolanita"];
     return {
       categories: categories,
       url: null,
     }
+  },
+  cnbc: (category: string) => {
+    const categories = ["market", "news", "entrepreneur", "syariah", "tech", "lifestyle", "opini", "mymoney", "cuap-cuap-cuan", "research"]
+    return {
+      categories: categories,
+      url: `https://www.cnbcindonesia.com/${categories.includes(category) ? category : "news"}/rss`
+    }
   }
 };
 
 const parser = new XMLParser();
+const trimHtmlTags = (html: string) => html.replace(/<[^>]*>/g, "");
 export const rssRoutes = async (context: Context<{ Bindings: CFBindings; }, "/rss/:channel/:category", BlankInput>) => {
   const { channel, category } = context.req.param()
   const { NODE_ENV } = context.env
@@ -119,7 +127,7 @@ export const rssRoutes = async (context: Context<{ Bindings: CFBindings; }, "/rs
     items = result.rss.channel.item.map(i => ({
       title: i.title,
       link: i.link,
-      description: i.description,
+      description: trimHtmlTags(i.description).trim(),
       published_at: i.pubDate,
       thumbnail: i.thumb
     }))
