@@ -1,6 +1,7 @@
 import { XMLParser } from "fast-xml-parser";
 import { Context } from "hono";
-import { BlankEnv } from "hono/types";
+import { BlankInput } from "hono/types";
+import { Bindings as CFBindings } from "./";
 
 export type FeedItem = {
   rss: {
@@ -64,28 +65,29 @@ export const feedResolver = {
 };
 
 const parser = new XMLParser();
-export const rssRoutes = async (c: Context<BlankEnv, "/news/:channel/:category", any>) => {
-  const { channel, category } = c.req.param()
-
-  const cacheKey = c.req.raw
+export const rssRoutes = async (context: Context<{ Bindings: CFBindings; }, "/rss/:channel/:category", BlankInput>) => {
+  const { channel, category } = context.req.param()
+  const { NODE_ENV } = context.env
+  const cacheKey = context.req.raw
   const cache = caches.default
   let response = await cache.match(cacheKey)
 
   // return cached response if available
-  if (response) {
+  if (response && NODE_ENV !== "development") {
     return response
   }
 
   const channelConfig = feedResolver[channel as keyof typeof feedResolver];
   if (!channelConfig) {
-    return c.json({
+    return context.json({
       error: "Channel not found"
     }, 404);
   }
   const { url, categories } = channelConfig(category)
   let data = await fetch(url, {
     cf: {
-      cacheTtl: 5 * 60, // always cache this request for 5 minutes
+      // disable cache in development
+      cacheTtl: NODE_ENV !== "development" ? 5 * 60 : undefined,
       cacheEverything: true,
     },
     headers: {
@@ -111,8 +113,8 @@ export const rssRoutes = async (c: Context<BlankEnv, "/news/:channel/:category",
     thumbnail: i.thumb
   }))
 
-  const jsonResponse = c.json({
-    categories: categories,
+  const jsonResponse = context.json({
+    available_categories: categories,
     cached_at: new Date().toISOString(),
     items: items
   }, 200, {

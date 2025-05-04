@@ -21,13 +21,13 @@ Visit index page to see available categories.
 
 ```bash
 # Get all Kompas news
-curl [https://news-api-id.famasya.workers.dev/rss/kompas/all](https://news-api-id.famasya.workers.dev/rss/kompas/all)
+curl https://news-api-id.famasya.workers.dev/rss/kompas/news
 
 # Get Antara news (defaults to terkini if category is not valid)
-curl [https://news-api-id.famasya.workers.dev/rss/antaranews/terkini](https://news-api-id.famasya.workers.dev/rss/antaranews/terkini)
+curl https://news-api-id.famasya.workers.dev/rss/antaranews/terkini
 
 # Get CNN Indonesia news
-curl [https://news-api-id.famasya.workers.dev/rss/cnn/nasional](https://news-api-id.famasya.workers.dev/rss/cnn/nasional)
+curl https://news-api-id.famasya.workers.dev/rss/cnn/nasional
 
 # Get Liputan6 news
-curl [https://news-api-id.famasya.workers.dev/rss/liputan6/news](https://news-api-id.famasya.workers.dev/rss/liputan6/news)
+curl https://news-api-id.famasya.workers.dev/rss/liputan6/news

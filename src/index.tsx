@@ -3,7 +3,9 @@ import { renderer } from './renderer';
 import RoutesPage from './route';
 import { rssRoutes } from './rss';
 
-type Bindings = {};
+export type Bindings = {
+  NODE_ENV: "development" | "production";
+};
 const app = new Hono<{ Bindings: Bindings }>()
 
 app.use(renderer)
