@@ -1,3 +1,4 @@
+[![Deploy](https://github.com/famasya/news-api-id/actions/workflows/main.yml/badge.svg)](https://github.com/famasya/news-api-id/actions/workflows/main.yml)
 # News API ID
 
 A Cloudflare Worker-based API for accessing Indonesian news feeds from various news sources.
