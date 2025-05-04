@@ -128,7 +128,7 @@ export const rssRoutes = async (context: Context<{ Bindings: CFBindings; }, "/rs
       title: i.title,
       link: i.link,
       description: trimHtmlTags(i.description).trim(),
-      published_at: i.pubDate,
+      published_at: new Date(i.pubDate).toISOString(),
       thumbnail: i.thumb
     }))
   } else if (channel === "kumparan") {
