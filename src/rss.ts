@@ -3,6 +3,7 @@ import { Context } from "hono";
 import { BlankInput } from "hono/types";
 import { Bindings as CFBindings } from "./";
 import { kumparanNews } from "./kumparan";
+import { tempoNews } from "./tempo";
 
 export type FeedItem = {
   rss: {
@@ -76,6 +77,13 @@ export const feedResolver = {
       categories: categories,
       url: `https://www.cnbcindonesia.com/${categories.includes(category) ? category : "news"}/rss`
     }
+  },
+  tempo: (_: string) => {
+    const categories = ["all", "politik", "hukum", "ekonomi", "lingkungan", "wawancara", "sains", "investigasi", "cekfakta", "kolom", "hiburan", "internasional", "arsip", "otomotif", "olahraga", "sepakbola", "digital", "gaya", "teroka", "prelude", "tokoh", "video", "foto", "data", "infografik", "pemilu", "newsletter", "info", "ramadan"];
+    return {
+      categories: categories,
+      url: null,
+    }
   }
 };
 
@@ -133,6 +141,8 @@ export const rssRoutes = async (context: Context<{ Bindings: CFBindings; }, "/rs
     }))
   } else if (channel === "kumparan") {
     items = await kumparanNews(categories.includes(category) ? category : "news")
+  } else if (channel === "tempo") {
+    items = await tempoNews(categories.includes(category) ? category : "all")
   }
 
   const jsonResponse = context.json({
