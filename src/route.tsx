@@ -5,12 +5,13 @@ export default function RoutesPage() {
 
   return <>
     <h3>Available routes</h3>
+    <p>Results are cached for 5 minutes.</p>
     {channels.map((channel) => (
       <>
         <h4>{channel}</h4>
         <ul>
           {feedResolver[channel as keyof typeof feedResolver]("").categories.map((category) => (
-            <li key={category}><a href={`/rss/${channel}/${category}`} target={"_blank"}>rss/{channel}/{category}</a></li>
+            <li key={category}><a href={`/rss/${channel}/${category}`}>rss/{channel}/{category}</a></li>
           ))}
         </ul>
       </>

@@ -2,6 +2,7 @@ import { XMLParser } from "fast-xml-parser";
 import { Context } from "hono";
 import { BlankInput } from "hono/types";
 import { Bindings as CFBindings } from "./";
+import { kumparanNews } from "./kumparan";
 
 export type FeedItem = {
   rss: {
@@ -20,7 +21,7 @@ export type FeedItem = {
   }
 }
 
-type ItemResponse = {
+export type ItemResponse = {
   title: string
   link: string
   thumbnail?: string
@@ -61,6 +62,13 @@ export const feedResolver = {
       categories: categories,
       url: `https://feed.liputan6.com/rss/${categories.includes(category) ? category : "news"}`
     }
+  },
+  kumparan: (category: string) => {
+    const categories = ["news", "entertainment", "tekno-sains", "bisnis", "food-travel", "otomotif", "bola-sports", "woman", "mom", "bolanita"];
+    return {
+      categories: categories,
+      url: null,
+    }
   }
 };
 
@@ -83,43 +91,49 @@ export const rssRoutes = async (context: Context<{ Bindings: CFBindings; }, "/rs
       error: "Channel not found"
     }, 404);
   }
-  const { url, categories } = channelConfig(category)
-  let data = await fetch(url, {
-    cf: {
-      // disable cache in development
-      cacheTtl: NODE_ENV !== "development" ? 5 * 60 : undefined,
-      cacheEverything: true,
-    },
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-      'Accept-Language': 'en-US,en;q=0.5',
-      'Accept-Encoding': 'gzip, deflate',
-      'Connection': 'keep-alive',
-      'Upgrade-Insecure-Requests': '1',
-      'Sec-Fetch-Dest': 'document',
-      'Sec-Fetch-Mode': 'navigate',
-      'Sec-Fetch-Site': 'none',
-      'Sec-Fetch-User': '?1'
-    },
-  })
 
-  const result = parser.parse(await data.text()) as FeedItem
-  const items: ItemResponse[] = result.rss.channel.item.map(i => ({
-    title: i.title,
-    link: i.link,
-    description: i.description,
-    published_at: i.pubDate,
-    thumbnail: i.thumb
-  }))
+  let items: ItemResponse[] = []
+  const { url, categories } = await channelConfig(category)
+  if (url) {
+    let data = await fetch(url, {
+      cf: {
+        // disable cache in development
+        cacheTtl: NODE_ENV !== "development" ? 5 * 60 : undefined,
+        cacheEverything: true,
+      },
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1'
+      },
+    })
+
+    const result = parser.parse(await data.text()) as FeedItem
+    items = result.rss.channel.item.map(i => ({
+      title: i.title,
+      link: i.link,
+      description: i.description,
+      published_at: i.pubDate,
+      thumbnail: i.thumb
+    }))
+  } else if (channel === "kumparan") {
+    items = await kumparanNews(categories.includes(category) ? category : "news")
+  }
 
   const jsonResponse = context.json({
     available_categories: categories,
     cached_at: new Date().toISOString(),
     items: items
-  }, 200, {
+  }, 200, NODE_ENV !== "development" ? {
     "Cache-Control": "max-age=300, stale-while-revalidate=600"
-  })
+  } : undefined)
 
   // cache response
   await cache.put(cacheKey, jsonResponse.clone())

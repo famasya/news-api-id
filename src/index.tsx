@@ -13,7 +13,6 @@ app.use(renderer)
 app.get('/', (c) => {
   return c.render(RoutesPage())
 })
-
 app.get('/rss/:channel/:category', rssRoutes)
 
 export default {
