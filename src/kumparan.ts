@@ -49,7 +49,7 @@ export const kumparanNews = async (category: string) => {
   const items: ItemResponse[] = jsonResponse.data.FindStoryFeedByChannelSlug.edges.map(i => {
     return {
       title: i.title,
-      link: i.slug,
+      link: `https://kumparan.com/${category}/${i.slug}`,
       description: i.leadText,
       published_at: i.publishedAt,
       thumbnail: i.leadMedia[0].externalURL
