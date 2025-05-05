@@ -7,7 +7,8 @@ export const renderer = jsxRenderer(({ children }) => {
       <head>
         <Style>{css`
           body {
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            padding: 20px;
           }
 
           h4 {

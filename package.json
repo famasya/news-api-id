@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "fast-xml-parser": "^5.2.1",
-    "hono": "^4.7.8"
+    "hono": "^4.7.8",
+    "node-html-parser": "^7.0.1"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^0.1.15",

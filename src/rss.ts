@@ -2,6 +2,7 @@ import { XMLParser } from "fast-xml-parser";
 import { Context } from "hono";
 import { BlankInput } from "hono/types";
 import { Bindings as CFBindings } from "./";
+import { idntimesNews } from "./idntimes";
 import { kumparanNews } from "./kumparan";
 import { tempoNews } from "./tempo";
 
@@ -37,7 +38,7 @@ export const feedResolver = {
     }
   },
   antaranews: (category: string) => {
-    const categories = ["terkini", "video", "politik", "ekonomi", "bola", "hukum", "teknologi", "metro", "sepakbola", "olahraga", "humaniora", "lifestyle", "hiburan", "dunia", "infografik"]
+    const categories = ["terkini", "politik", "ekonomi", "bola", "hukum", "teknologi", "metro", "sepakbola", "olahraga", "humaniora", "lifestyle", "hiburan", "dunia", "infografik"]
     return {
       categories: categories,
       url: `https://antaranews.com/rss/${categories.includes(category) ? category : "terkini"}`
@@ -79,7 +80,7 @@ export const feedResolver = {
     }
   },
   tempo: (_: string) => {
-    const categories = ["all", "politik", "hukum", "ekonomi", "lingkungan", "wawancara", "sains", "investigasi", "cekfakta", "kolom", "hiburan", "internasional", "arsip", "otomotif", "olahraga", "sepakbola", "digital", "gaya", "teroka", "prelude", "tokoh", "video", "foto", "data", "infografik", "pemilu", "newsletter", "info", "ramadan"];
+    const categories = ["all", "politik", "hukum", "ekonomi", "lingkungan", "wawancara", "sains", "investigasi", "cekfakta", "kolom", "hiburan", "internasional", "arsip", "otomotif", "olahraga", "sepakbola", "digital", "gaya", "teroka", "prelude", "tokoh", "foto", "data", "infografik", "pemilu", "newsletter", "info", "ramadan"];
     return {
       categories: categories,
       url: null,
@@ -89,6 +90,21 @@ export const feedResolver = {
     return {
       categories: ["all"],
       url: "https://www.inews.id/feed",
+    }
+  },
+  sindonews: (category: string) => {
+    const categories = ["all", "nasional", "internasional", "daerah", "lifestyle", "sports", "ekbis", "kalam", "teknologi", "otomotif", "edukasi"];
+    const normalizedCategory = categories.includes(category) ? category : "all"
+    return {
+      categories: categories,
+      url: `https://${normalizedCategory === "all" ? "www" : normalizedCategory}.sindonews.com/rss`,
+    }
+  },
+  idntimes: (_: string) => {
+    const categories = ["news", "business", "sport", "tech", "hype", "korea", "life", "health", "travel", "science", "automotive", "opinion", "men", "food", "fiction"];
+    return {
+      categories: categories,
+      url: null,
     }
   }
 };
@@ -149,6 +165,8 @@ export const rssRoutes = async (context: Context<{ Bindings: CFBindings; }, "/rs
     items = await kumparanNews(categories.includes(category) ? category : "news")
   } else if (channel === "tempo") {
     items = await tempoNews(categories.includes(category) ? category : "all")
+  } else if (channel === "idntimes") {
+    items = await idntimesNews(categories.includes(category) ? category : "news")
   }
 
   const jsonResponse = context.json({
