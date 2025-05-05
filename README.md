@@ -7,16 +7,9 @@ A Cloudflare Worker-based API for accessing Indonesian news feeds from various n
 
 - GET `/rss/:channel/:category`
 
-## Available Channels
+## Available Channels and Categories
 
-- `kompas`
-- `antaranews`
-- `cnn`
-- `liputan6`
-
-## Available Categories
-
-Visit index page to see available categories.
+Visit index page to see.
 
 ## Usage Examples
 
