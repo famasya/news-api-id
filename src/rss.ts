@@ -32,7 +32,7 @@ export type ItemResponse = {
 export const feedResolver = {
   kompas: (_: string) => {
     return {
-      categories: ["news"],
+      categories: ["all"],
       url: "https://rss.kompas.com/api/feed/social?apikey=bc58c81819dff4b8d5c53540a2fc7ffd83e6314a"
     }
   },
@@ -83,6 +83,12 @@ export const feedResolver = {
     return {
       categories: categories,
       url: null,
+    }
+  },
+  inews: (_: string) => {
+    return {
+      categories: ["all"],
+      url: "https://www.inews.id/feed",
     }
   }
 };
