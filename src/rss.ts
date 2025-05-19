@@ -38,7 +38,7 @@ export const feedResolver = {
     }
   },
   antaranews: (category: string) => {
-    const categories = ["terkini", "politik", "ekonomi", "bola", "hukum", "teknologi", "metro", "sepakbola", "olahraga", "humaniora", "lifestyle", "hiburan", "dunia", "infografik"]
+    const categories = ["terkini", "politik", "ekonomi", "bola", "hukum", "tekno", "metro", "sepakbola", "olahraga", "humaniora", "lifestyle", "hiburan", "dunia", "infografik"]
     return {
       categories: categories,
       url: `https://antaranews.com/rss/${categories.includes(category) ? category : "terkini"}`
